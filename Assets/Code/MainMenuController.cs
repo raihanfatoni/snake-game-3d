@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -47,13 +47,11 @@ public class MainMenuController : MonoBehaviour
     public void PlayGame(string name)
     {
         SceneManager.LoadScene(name);
-
     }
 
     public void QuitGame()
     {
-        UnityEditor.EditorApplication.isPlaying = false;
-       // Application.Quit();
-       // Debug.Log("Quit!");
+        Application.Quit();
+        Debug.Log("Quit!");
     }
 }

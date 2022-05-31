@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 
 public class SnakeController : MonoBehaviour {
+    
     public AudioClip triggerSoundApple;
     public AudioClip triggerSoundSusu;
     AudioSource audioSource;
@@ -25,6 +26,8 @@ public class SnakeController : MonoBehaviour {
     public GameObject ApplePrefab;
     public GameObject MilkPrefab;
     public GameObject SwordPrefab;
+
+
     // Lists
     private List<GameObject> BodyParts = new List<GameObject>();
     private List<Vector3> PositionsHistory = new List<Vector3>();
@@ -74,7 +77,8 @@ public class SnakeController : MonoBehaviour {
     {
         if (other.tag == "Wall")
         {
-            UnityEditor.EditorApplication.isPlaying = false;
+            PlayerManager.isGameOver = true;
+            gameObject.SetActive(false);
             Debug.Log("Hit The Wall?");
         }
         else if (other.gameObject.tag == "Enemy")
