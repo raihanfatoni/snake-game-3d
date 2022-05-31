@@ -47,11 +47,13 @@ public class MainMenuController : MonoBehaviour
     public void PlayGame(string name)
     {
         SceneManager.LoadScene(name);
+
     }
 
     public void QuitGame()
     {
-        Application.Quit();
-        Debug.Log("Quit Game");
+        UnityEditor.EditorApplication.isPlaying = false;
+       // Application.Quit();
+       // Debug.Log("Quit!");
     }
 }

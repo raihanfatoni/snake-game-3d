@@ -1,30 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-pulbic class Tags
-{
-    public static string ENEMY = "Enemy";
-}
 
 public class SnakeController : MonoBehaviour {
+    public AudioClip triggerSoundApple;
+    public AudioClip triggerSoundSusu;
+    AudioSource audioSource;
+    AudioSource audioSource1;
 
     // Settings
     public float MoveSpeed = 40;
     public float SteerSpeed = 180;
     public float BodySpeed = 8;
     public int Gap = 13;
-    public int score = 0;
+
+    public int Score = 0;
+    public Text scoreText;
 
     // References
     public GameObject BodyPrefab;
-
+    public GameObject ApplePrefab;
+    public GameObject MilkPrefab;
+    public GameObject SwordPrefab;
     // Lists
     private List<GameObject> BodyParts = new List<GameObject>();
     private List<Vector3> PositionsHistory = new List<Vector3>();
 
     // Start is called before the first frame update
     void Start() {
+        audioSource = GetComponent<AudioSource>();
+        audioSource1 = GetComponent<AudioSource>();
+        Vector3 RandomSpawn = new Vector3(Random.Range(-10, 10), 4, Random.Range(-10, 10));
+        Instantiate(ApplePrefab, RandomSpawn, Quaternion.identity);
         GrowSnake();
         GrowSnake();
 
@@ -55,25 +65,99 @@ public class SnakeController : MonoBehaviour {
             // Rotate body towards the point along the snakes path
             body.transform.LookAt(point);
             index++;
+
         }
     }
+   
 
-    private void OnTriggerEnter(Collider collider)
+    private void OnTriggerEnter(Collider other)
     {
-        
-        if (collider.tag == Tags.ENEMY)
+        if (other.tag == "Wall")
         {
-            Destroy(other.gameObject);
+            UnityEditor.EditorApplication.isPlaying = false;
+            Debug.Log("Hit The Wall?");
+        }
+        else if (other.gameObject.tag == "Enemy")
+        {
+            audioSource.PlayOneShot(triggerSoundApple, 0.7F);
             GrowSnake();
-            score++;
-            Instantiate(objects, new vector3(Random.Range(-10.0f, 10.0f)));
+            Destroy(other.gameObject);
+            Score++;
+
+            if (Score % 5 == 0)
+            {
+                Vector3 RandomSpawn = new Vector3(Random.Range(-10, 10), 4, Random.Range(-10, 10));
+                Instantiate(MilkPrefab, RandomSpawn, Quaternion.identity);
+                Vector3 RandomSpawn2 = new Vector3(Random.Range(-5, 5), 4, Random.Range(-5, 5));
+                Instantiate(ApplePrefab, RandomSpawn2, Quaternion.identity);
+
+            }
+            else if (Score % 12 == 0)
+            {
+                Vector3 RandomSpawn = new Vector3(Random.Range(-10, 10), 4, Random.Range(-10, 10));
+                Instantiate(SwordPrefab, RandomSpawn, Quaternion.identity);
+            }
+            else
+            {
+                Vector3 RandomSpawn = new Vector3(Random.Range(-10, 10), 4, Random.Range(-10, 10));
+                Instantiate(ApplePrefab, RandomSpawn, Quaternion.identity);
+                
+            }
+            scoreText.text = "Score : " + Score;
+        }
+        else if (other.gameObject.tag == "Milk")
+        {
+            audioSource.PlayOneShot(triggerSoundSusu, 0.7F);
+            GrowSnake();
+            GrowSnake();
+            GrowSnake();
+            Destroy(other.gameObject);
+            Score = Score + 3;
+            if (Score % 5 == 0)
+            {
+                Vector3 RandomSpawn = new Vector3(Random.Range(-10, 10), 4, Random.Range(-10, 10));
+                Instantiate(MilkPrefab, RandomSpawn, Quaternion.identity);
+                
+            }
+            else if (Score % 12 == 0)
+            {
+                Vector3 RandomSpawn = new Vector3(Random.Range(-10, 10), 4, Random.Range(-10, 10));
+                Instantiate(SwordPrefab, RandomSpawn, Quaternion.identity);
+                
+            }
+            else
+            {
+                Vector3 RandomSpawn = new Vector3(Random.Range(-10, 10), 4, Random.Range(-10, 10));
+                Instantiate(ApplePrefab, RandomSpawn, Quaternion.identity);
+                
+            }
+            scoreText.text = "Score : " + Score;
+        }
+        else if (other.gameObject.tag == "Sword")
+        {
+            DestroySnake();
+            DestroySnake();
+            DestroySnake();
+            DestroySnake();
+            DestroySnake();
+            Score = Score - 5;
+            Destroy(other.gameObject);
+            scoreText.text = "Score : " + Score;
+
         }
     }
 
-    private void GrowSnake() {
+    void GrowSnake() {
         // Instantiate body instance and
         // add it to the list
         GameObject body = Instantiate(BodyPrefab);
         BodyParts.Add(body);
+    }
+
+    void DestroySnake()
+    {
+        GameObject delbody = BodyParts[0];
+        BodyParts.Remove(delbody);
+        Destroy(delbody);
     }
 }
